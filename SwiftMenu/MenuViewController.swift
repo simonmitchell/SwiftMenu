@@ -8,12 +8,18 @@
 
 import UIKit
 
-typealias MenuItemHandler = (menuItem: MenuItem) -> (Void)
+public typealias MenuItemHandler = (menuItem: MenuItem) -> (Void)
 
 public struct MenuItem {
     
     var title: String?
     var handler: MenuItemHandler?
+    
+    public init(title: String?, handler: MenuItemHandler?) {
+        
+        self.title = title
+        self.handler = handler
+    }
 }
 
 public class MenuViewController: UIViewController {
@@ -26,22 +32,35 @@ public class MenuViewController: UIViewController {
     
     private var gestureRecognizer: UILongPressGestureRecognizer?
     
+    private var originalPresentationMode: UIModalPresentationStyle = .FullScreen
+    
+    @IBOutlet weak var containerStackView: UIStackView!
+    
+    @IBOutlet weak var containerViewController: UIView!
+    
     public init(menuItems initMenuItems: [MenuItem]) {
         
         menuItems = initMenuItems
         super.init(nibName: "MenuViewController", bundle: NSBundle(forClass: MenuViewController.self))
+        
+        providesPresentationContextTransitionStyle = true
+        definesPresentationContext = true
+        modalPresentationStyle = .OverCurrentContext
     }
     
     public func attachToView(view: UIView, inViewController: UIViewController) {
         
-        attachedView = view
         if let _attachedView = attachedView, _gestureRecognizer = gestureRecognizer {
             
             _attachedView.removeGestureRecognizer(_gestureRecognizer)
             gestureRecognizer = nil
         }
         
+        attachedView = view
         attachedViewController = inViewController
+        
+        originalPresentationMode = inViewController.modalPresentationStyle
+        inViewController.modalPresentationStyle = .CurrentContext
         
         let newGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MenuViewController.handleGesture(_:)))
         newGestureRecognizer.minimumPressDuration = 0.01
@@ -51,6 +70,29 @@ public class MenuViewController: UIViewController {
         gestureRecognizer = newGestureRecognizer
     }
     
+    public override func viewDidLoad() {
+        
+        super.viewDidLoad()
+    }
+    
+    public override func viewWillAppear(animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        
+        for subview in containerStackView.arrangedSubviews {
+            if let menuItemView = subview as? MenuItemView {
+                containerStackView.removeArrangedSubview(subview)
+            }
+        }
+        
+        if let _menuItems = menuItems {
+
+            for menuItem in _menuItems {
+                containerStackView.insertArrangedSubview(MenuItemView(item: menuItem), atIndex: 0)
+            }
+        }
+    }
+    
     func handleGesture(sender: UILongPressGestureRecognizer) {
         
         switch sender.state {
@@ -58,37 +100,34 @@ public class MenuViewController: UIViewController {
             
             if let viewController = attachedViewController where sender == gestureRecognizer && self.presentingViewController == nil {
                 
-                if let _gestureRecognizer = gestureRecognizer {
+                viewController.presentViewController(self, animated: true, completion: {
                     
-                    // Switch the gesture recognizer over to this view
-                    view.addGestureRecognizer(_gestureRecognizer)
-                }
-                viewController.presentViewController(self, animated: true, completion: nil)
+                    if let _gestureRecognizer = self.gestureRecognizer {
+                        
+                        // Switch the gesture recognizer over to this view
+                        self.view.addGestureRecognizer(_gestureRecognizer)
+                    }
+                })
             }
         case .Ended:
             
-            if presentingViewController != nil {
+            if let _gestureRecognizer = gestureRecognizer {
                 
-                if let _gestureRecognizer = gestureRecognizer {
-                    
-                    // Remove the gesture recognizer
-                    view.removeGestureRecognizer(_gestureRecognizer)
-                    
-                    // And switch it back to the attached view!
-                    if let _attachedView = attachedView {
-                        _attachedView.addGestureRecognizer(_gestureRecognizer)
-                    }
+                // Remove the gesture recognizer
+                view.removeGestureRecognizer(_gestureRecognizer)
+                
+                // And switch it back to the attached view!
+                if let _attachedView = attachedView {
+                    _attachedView.addGestureRecognizer(_gestureRecognizer)
                 }
-                
-                self.dismissViewControllerAnimated(true, completion: nil)
             }
+            
+            dismissViewControllerAnimated(true, completion: {
+                self.attachedViewController?.modalPresentationStyle = self.originalPresentationMode
+            })
         default:
             ""
         }
-    }
-    
-    public override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        print("Touch Ended!")
     }
     
     required public init?(coder aDecoder: NSCoder) {

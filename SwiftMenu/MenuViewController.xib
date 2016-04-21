@@ -5,8 +5,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ViewController" customModule="SwiftMenu" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MenuViewController" customModule="SwiftMenu" customModuleProvider="target">
             <connections>
+                <outlet property="containerStackView" destination="AWp-Gr-zXq" id="F7u-yd-VOv"/>
+                <outlet property="containerViewController" destination="pf7-yJ-DCS" id="s5m-2j-ZAj"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -15,17 +17,67 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="I'm a menu!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UUk-yB-09H">
-                    <rect key="frame" x="256" y="289" width="88" height="21"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
+                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pf7-yJ-DCS">
+                    <rect key="frame" x="20" y="262.5" width="560" height="75"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AWp-Gr-zXq">
+                            <rect key="frame" x="0.0" y="0.0" width="560" height="75"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FDY-Go-gyM">
+                                    <rect key="frame" x="0.0" y="0.0" width="560" height="75"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QHf-hO-gor">
+                                            <rect key="frame" x="9" y="20" width="542" height="46"/>
+                                            <color key="backgroundColor" red="0.87843137250000003" green="0.3294117647" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="46" id="f1k-Zd-DKW"/>
+                                            </constraints>
+                                            <state key="normal" title="Cancel">
+                                                <color key="titleColor" white="0.0" alpha="0.31645903720000002" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="color" keyPath="layer.backgroundColor">
+                                                    <color key="value" red="0.98431372549019602" green="0.27843137254901962" blue="0.27843137254901962" alpha="1" colorSpace="calibratedRGB"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                                    <integer key="value" value="1"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
+                                                    <color key="value" red="0.83921568627450982" green="0.36470588235294116" blue="0.36470588235294116" alpha="1" colorSpace="calibratedRGB"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="QHf-hO-gor" secondAttribute="bottom" constant="9" id="A9b-Jx-Y15"/>
+                                        <constraint firstItem="QHf-hO-gor" firstAttribute="leading" secondItem="FDY-Go-gyM" secondAttribute="leading" constant="9" id="EXQ-e8-bJC"/>
+                                        <constraint firstAttribute="trailing" secondItem="QHf-hO-gor" secondAttribute="trailing" constant="9" id="I27-8l-YWN"/>
+                                        <constraint firstItem="QHf-hO-gor" firstAttribute="top" secondItem="FDY-Go-gyM" secondAttribute="top" constant="20" id="joE-md-Rg5"/>
+                                    </constraints>
+                                </view>
+                            </subviews>
+                        </stackView>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="AWp-Gr-zXq" firstAttribute="top" secondItem="pf7-yJ-DCS" secondAttribute="top" id="C2i-8m-Xxw"/>
+                        <constraint firstItem="AWp-Gr-zXq" firstAttribute="leading" secondItem="pf7-yJ-DCS" secondAttribute="leading" id="Q2c-Ai-9MH"/>
+                        <constraint firstAttribute="trailing" secondItem="AWp-Gr-zXq" secondAttribute="trailing" id="ksu-9P-9Ij"/>
+                        <constraint firstAttribute="bottom" secondItem="AWp-Gr-zXq" secondAttribute="bottom" id="qjC-AD-EOF"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="12"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <color key="backgroundColor" white="0.0" alpha="0.31645903716216217" colorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="UUk-yB-09H" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="1Ec-pd-aBw"/>
-                <constraint firstItem="UUk-yB-09H" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="xhk-TX-Afd"/>
+                <constraint firstAttribute="trailing" secondItem="pf7-yJ-DCS" secondAttribute="trailing" constant="20" id="LhN-dh-KDA"/>
+                <constraint firstItem="pf7-yJ-DCS" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="SGr-sa-9ha"/>
+                <constraint firstItem="pf7-yJ-DCS" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="anu-Q6-EHY"/>
             </constraints>
         </view>
     </objects>
