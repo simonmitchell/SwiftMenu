@@ -32,13 +32,11 @@
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="46" id="f1k-Zd-DKW"/>
                                             </constraints>
+                                            <color key="tintColor" red="0.87843137250000003" green="0.3294117647" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
                                             <state key="normal" title="Cancel">
-                                                <color key="titleColor" white="0.0" alpha="0.31645903720000002" colorSpace="calibratedWhite"/>
+                                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             </state>
                                             <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="color" keyPath="layer.backgroundColor">
-                                                    <color key="value" red="0.98431372549019602" green="0.27843137254901962" blue="0.27843137254901962" alpha="1" colorSpace="calibratedRGB"/>
-                                                </userDefinedRuntimeAttribute>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
                                                     <integer key="value" value="1"/>
                                                 </userDefinedRuntimeAttribute>
