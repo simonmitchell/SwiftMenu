@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B11052541CC9760E00400357 /* MenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11052531CC9760E00400357 /* MenuItemView.swift */; };
 		B17F178B1CC9646C00CC75E6 /* SwiftMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = B17F178A1CC9646C00CC75E6 /* SwiftMenu.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B17F17921CC9646D00CC75E6 /* SwiftMenu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B17F17871CC9646C00CC75E6 /* SwiftMenu.framework */; };
 		B17F17971CC9646D00CC75E6 /* SwiftMenuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17F17961CC9646D00CC75E6 /* SwiftMenuTests.swift */; };
 		B17F17AC1CC9647A00CC75E6 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17F17AA1CC9647A00CC75E6 /* MenuViewController.swift */; };
-		B17F17AD1CC9647A00CC75E6 /* MenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B17F17AB1CC9647A00CC75E6 /* MenuViewController.xib */; };
+		B17F17BE1CC96D6000CC75E6 /* MenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B17F17BD1CC96D6000CC75E6 /* MenuViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,6 +26,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B11052531CC9760E00400357 /* MenuItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuItemView.swift; sourceTree = "<group>"; };
 		B17F17871CC9646C00CC75E6 /* SwiftMenu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftMenu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B17F178A1CC9646C00CC75E6 /* SwiftMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftMenu.h; sourceTree = "<group>"; };
 		B17F178C1CC9646C00CC75E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -32,7 +34,7 @@
 		B17F17961CC9646D00CC75E6 /* SwiftMenuTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftMenuTests.swift; sourceTree = "<group>"; };
 		B17F17981CC9646D00CC75E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B17F17AA1CC9647A00CC75E6 /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
-		B17F17AB1CC9647A00CC75E6 /* MenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuViewController.xib; sourceTree = "<group>"; };
+		B17F17BD1CC96D6000CC75E6 /* MenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,7 +78,8 @@
 			isa = PBXGroup;
 			children = (
 				B17F17AA1CC9647A00CC75E6 /* MenuViewController.swift */,
-				B17F17AB1CC9647A00CC75E6 /* MenuViewController.xib */,
+				B17F17BD1CC96D6000CC75E6 /* MenuViewController.xib */,
+				B11052531CC9760E00400357 /* MenuItemView.swift */,
 				B17F178A1CC9646C00CC75E6 /* SwiftMenu.h */,
 				B17F178C1CC9646C00CC75E6 /* Info.plist */,
 			);
@@ -183,7 +186,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B17F17AD1CC9647A00CC75E6 /* MenuViewController.xib in Resources */,
+				B17F17BE1CC96D6000CC75E6 /* MenuViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,6 +204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B11052541CC9760E00400357 /* MenuItemView.swift in Sources */,
 				B17F17AC1CC9647A00CC75E6 /* MenuViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,6 +390,7 @@
 				B17F179D1CC9646D00CC75E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B17F179E1CC9646D00CC75E6 /* Build configuration list for PBXNativeTarget "SwiftMenuTests" */ = {
 			isa = XCConfigurationList;
@@ -394,6 +399,7 @@
 				B17F17A01CC9646D00CC75E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
