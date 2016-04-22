@@ -10,11 +10,18 @@ import UIKit
 
 internal class MenuItemView: UIView {
     
-    private let menuItem: MenuItem
+    internal let menuItem: MenuItem
     
     private let titleLabel: UILabel
     
     private let singlePixelLine: UIView = UIView()
+    
+    internal var selected: Bool = false {
+        didSet {
+            titleLabel.textColor = selected ? UIColor.whiteColor() : UIColor.blackColor()
+            backgroundColor = selected ? UIColor(red:0.180,  green:0.286,  blue:0.404, alpha:1) : UIColor.whiteColor()
+        }
+    }
 
     internal init(item: MenuItem) {
         
