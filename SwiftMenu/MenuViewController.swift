@@ -22,6 +22,15 @@ public struct MenuItem {
     }
 }
 
+public extension UIGestureRecognizer {
+    
+    func touchWithinView(view: UIView) -> Bool {
+        
+        let location = self.locationOfTouch(0, inView: view)
+        return CGRectContainsPoint(view.bounds, location)
+    }
+}
+
 public class MenuViewController: UIViewController {
     
     public var menuItems: [MenuItem]?
@@ -33,6 +42,24 @@ public class MenuViewController: UIViewController {
     private var gestureRecognizer: UILongPressGestureRecognizer?
     
     private var originalPresentationMode: UIModalPresentationStyle = .FullScreen
+    
+    private var hoveringView: UIView? {
+        willSet {
+            
+            guard newValue != hoveringView else { return }
+            
+            for view in containerStackView.arrangedSubviews {
+                
+                if let menuView = view as? MenuItemView {
+                    menuView.selected = false
+                }
+            }
+            
+            if let menuView = newValue as? MenuItemView {
+                menuView.selected = true
+            }
+        }
+    }
     
     @IBOutlet weak var containerStackView: UIStackView!
     
@@ -81,13 +108,13 @@ public class MenuViewController: UIViewController {
         
         for subview in containerStackView.arrangedSubviews {
             if let menuItemView = subview as? MenuItemView {
-                containerStackView.removeArrangedSubview(subview)
+                containerStackView.removeArrangedSubview(menuItemView)
             }
         }
         
         if let _menuItems = menuItems {
 
-            for menuItem in _menuItems {
+            for menuItem in _menuItems.reverse() {
                 containerStackView.insertArrangedSubview(MenuItemView(item: menuItem), atIndex: 0)
             }
         }
@@ -109,7 +136,7 @@ public class MenuViewController: UIViewController {
                     }
                 })
             }
-        case .Ended:
+        case .Ended/*, .Cancelled*/:
             
             if let _gestureRecognizer = gestureRecognizer {
                 
@@ -124,7 +151,21 @@ public class MenuViewController: UIViewController {
             
             dismissViewControllerAnimated(true, completion: {
                 self.attachedViewController?.modalPresentationStyle = self.originalPresentationMode
+                
+                if let selectedMenuView = self.hoveringView as? MenuItemView {
+                    selectedMenuView.menuItem.handler?(menuItem: selectedMenuView.menuItem)
+                }
+                
+                self.hoveringView = nil
             })
+        case .Changed:
+            
+            let touchedViews = containerStackView.arrangedSubviews.filter({
+                return sender.touchWithinView($0)
+            })
+            
+            hoveringView = touchedViews.first
+            
         default:
             ""
         }
