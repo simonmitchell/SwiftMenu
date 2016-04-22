@@ -114,7 +114,7 @@ public class MenuViewController: UIViewController {
         
         if let _menuItems = menuItems {
 
-            for menuItem in _menuItems {
+            for menuItem in _menuItems.reverse() {
                 containerStackView.insertArrangedSubview(MenuItemView(item: menuItem), atIndex: 0)
             }
         }
@@ -136,7 +136,7 @@ public class MenuViewController: UIViewController {
                     }
                 })
             }
-        case .Ended:
+        case .Ended/*, .Cancelled*/:
             
             if let _gestureRecognizer = gestureRecognizer {
                 
@@ -151,6 +151,12 @@ public class MenuViewController: UIViewController {
             
             dismissViewControllerAnimated(true, completion: {
                 self.attachedViewController?.modalPresentationStyle = self.originalPresentationMode
+                
+                if let selectedMenuView = self.hoveringView as? MenuItemView {
+                    selectedMenuView.menuItem.handler?(menuItem: selectedMenuView.menuItem)
+                }
+                
+                self.hoveringView = nil
             })
         case .Changed:
             
