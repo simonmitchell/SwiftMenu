@@ -7,7 +7,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MenuViewController" customModule="SwiftMenu" customModuleProvider="target">
             <connections>
-                <outlet property="containerStackView" destination="AWp-Gr-zXq" id="F7u-yd-VOv"/>
+                <outlet property="containerStackView" destination="5Ve-Jj-zem" id="tqg-9L-ZVl"/>
                 <outlet property="containerViewController" destination="pf7-yJ-DCS" id="s5m-2j-ZAj"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -17,16 +17,32 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pf7-yJ-DCS">
-                    <rect key="frame" x="20" y="262.5" width="560" height="75"/>
+                <view clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pf7-yJ-DCS">
+                    <rect key="frame" x="20" y="128" width="560" height="315"/>
                     <subviews>
-                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AWp-Gr-zXq">
-                            <rect key="frame" x="0.0" y="0.0" width="560" height="75"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AWp-Gr-zXq">
+                            <rect key="frame" x="0.0" y="0.0" width="560" height="315"/>
                             <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FDY-Go-gyM">
-                                    <rect key="frame" x="0.0" y="0.0" width="560" height="75"/>
+                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" bounces="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bI2-wd-Lxb">
+                                    <rect key="frame" x="0.0" y="0.0" width="560" height="240"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QHf-hO-gor">
+                                        <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="5Ve-Jj-zem">
+                                            <rect key="frame" x="0.0" y="0.0" width="560" height="240"/>
+                                        </stackView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="5Ve-Jj-zem" secondAttribute="bottom" id="BB7-Le-B9F"/>
+                                        <constraint firstItem="5Ve-Jj-zem" firstAttribute="height" secondItem="bI2-wd-Lxb" secondAttribute="height" priority="900" id="CrB-GO-wK4"/>
+                                        <constraint firstAttribute="trailing" secondItem="5Ve-Jj-zem" secondAttribute="trailing" id="Nty-cx-pMh"/>
+                                        <constraint firstItem="5Ve-Jj-zem" firstAttribute="width" secondItem="bI2-wd-Lxb" secondAttribute="width" id="b1m-Wf-nPG"/>
+                                        <constraint firstItem="5Ve-Jj-zem" firstAttribute="leading" secondItem="bI2-wd-Lxb" secondAttribute="leading" id="bYI-Oa-95y"/>
+                                        <constraint firstItem="5Ve-Jj-zem" firstAttribute="top" secondItem="bI2-wd-Lxb" secondAttribute="top" id="gI9-rT-cgD"/>
+                                    </constraints>
+                                </scrollView>
+                                <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FDY-Go-gyM">
+                                    <rect key="frame" x="0.0" y="240" width="560" height="75"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QHf-hO-gor">
                                             <rect key="frame" x="9" y="20" width="542" height="46"/>
                                             <color key="backgroundColor" red="0.87843137250000003" green="0.3294117647" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
@@ -55,6 +71,10 @@
                                     </constraints>
                                 </view>
                             </subviews>
+                            <constraints>
+                                <constraint firstItem="bI2-wd-Lxb" firstAttribute="leading" secondItem="AWp-Gr-zXq" secondAttribute="leading" id="BGf-KP-1BP"/>
+                                <constraint firstAttribute="trailing" secondItem="bI2-wd-Lxb" secondAttribute="trailing" id="qfG-c1-WfH"/>
+                            </constraints>
                         </stackView>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -76,6 +96,8 @@
                 <constraint firstAttribute="trailing" secondItem="pf7-yJ-DCS" secondAttribute="trailing" constant="20" id="LhN-dh-KDA"/>
                 <constraint firstItem="pf7-yJ-DCS" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="SGr-sa-9ha"/>
                 <constraint firstItem="pf7-yJ-DCS" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="anu-Q6-EHY"/>
+                <constraint firstItem="pf7-yJ-DCS" firstAttribute="top" relation="greaterThanOrEqual" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="36" id="eML-cN-9Jd"/>
+                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="pf7-yJ-DCS" secondAttribute="bottom" constant="20" id="iBF-Ie-1qh"/>
             </constraints>
         </view>
     </objects>
