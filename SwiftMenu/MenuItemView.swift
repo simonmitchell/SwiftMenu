@@ -58,24 +58,18 @@ internal class MenuItemView: UIView {
         
         super.layoutSubviews()
         
-        let constrainedSize = CGSizeMake(frame.width - 18, frame.height - 50)
-        titleLabel.frame = CGRectMake(0, 0, constrainedSize.width, constrainedSize.height)
+        let constrainedSize = titleLabel.sizeThatFits(CGSizeMake(CGFloat(MAXFLOAT), CGFloat(MAXFLOAT)))
+        titleLabel.frame = CGRectMake(0, 0, frame.width - 18, constrainedSize.height)
         titleLabel.center = CGPointMake(bounds.width/2, bounds.height/2)
         
-        singlePixelLine.frame = CGRectMake(0, bounds.size.height - 1, bounds.size.width, 1)
+        let pixelSize = 1 / UIScreen.mainScreen().scale
+        singlePixelLine.frame = CGRectMake(0, bounds.size.height - pixelSize, bounds.size.width, pixelSize)
     }
     
     override func intrinsicContentSize() -> CGSize {
         
         var superSize = super.intrinsicContentSize()
-        
-        let constrainedSize = CGSizeMake(superSize.width - 18, CGFloat(MAXFLOAT))
-        titleLabel.frame = CGRectMake(0, 0, constrainedSize.width, constrainedSize.height)
-        titleLabel.center = CGPointMake(bounds.width/2, bounds.height/2)
-        
-        let labelSize = titleLabel.sizeThatFits(constrainedSize)
-        
-        superSize.height = labelSize.height + 50
+        superSize.height = 62
         return superSize
     }
 }

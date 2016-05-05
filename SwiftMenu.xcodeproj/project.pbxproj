@@ -13,6 +13,7 @@
 		B17F17971CC9646D00CC75E6 /* SwiftMenuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17F17961CC9646D00CC75E6 /* SwiftMenuTests.swift */; };
 		B17F17AC1CC9647A00CC75E6 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17F17AA1CC9647A00CC75E6 /* MenuViewController.swift */; };
 		B17F17BE1CC96D6000CC75E6 /* MenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B17F17BD1CC96D6000CC75E6 /* MenuViewController.xib */; };
+		B1E29A551CDBFC4D00D57348 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1E29A541CDBFC4D00D57348 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 		B17F17981CC9646D00CC75E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B17F17AA1CC9647A00CC75E6 /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		B17F17BD1CC96D6000CC75E6 /* MenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuViewController.xib; sourceTree = "<group>"; };
+		B1E29A541CDBFC4D00D57348 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = SwiftMenu/Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 		B17F177D1CC9646C00CC75E6 = {
 			isa = PBXGroup;
 			children = (
+				B1E29A541CDBFC4D00D57348 /* Assets.xcassets */,
 				B17F17891CC9646C00CC75E6 /* SwiftMenu */,
 				B17F17951CC9646D00CC75E6 /* SwiftMenuTests */,
 				B17F17881CC9646C00CC75E6 /* Products */,
@@ -186,6 +189,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1E29A551CDBFC4D00D57348 /* Assets.xcassets in Resources */,
 				B17F17BE1CC96D6000CC75E6 /* MenuViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
