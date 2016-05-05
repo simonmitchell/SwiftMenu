@@ -199,6 +199,9 @@ public class MenuViewController: UIViewController {
                 scroll(false)
             } else if sender.touchWithinView(scrollUpView) && scrollUpView.alpha != 0 {
                 scroll(true)
+            } else {
+                scrollTimer?.invalidate()
+                scrollTimer = nil
             }
             
         default:
@@ -210,7 +213,29 @@ public class MenuViewController: UIViewController {
         super.init(coder: aDecoder)
     }
     
+    private var lockTime: NSTimeInterval = NSDate().timeIntervalSince1970
+    
+    /**
+     Because the user has to actually move their finger for UIGestureRecognizer method to be called, we'll assume every 0.5 seconds they're on the button to scroll again
+     */
+    private var scrollTimer: NSTimer?
+    
+    func scrollUp() {
+        scroll(true)
+    }
+    
+    func scrollDown() {
+        scroll(false)
+    }
+    
     func scroll(up: Bool) {
+        
+        if NSDate().timeIntervalSince1970 - lockTime < 0.5 {
+            return
+        }
+        
+        scrollTimer?.invalidate()
+        scrollTimer = nil
         
         guard let _menuItemViews = menuItemViews else { return }
         guard let firstArrangedView = containerStackView.arrangedSubviews.first as? MenuItemView, lastArrangedView = containerStackView.arrangedSubviews.last as? MenuItemView else { return }
@@ -221,20 +246,27 @@ public class MenuViewController: UIViewController {
         if up {
             
             if (currentTopIndex > 0) {
+                
+                lockTime = NSDate().timeIntervalSince1970
                 // Remove the bottom view from the stack view
                 containerStackView.removeArrangedSubview(lastArrangedView)
                 // Insert the view from _menuItemViews for the index before the top most one
                 containerStackView.insertArrangedSubview(_menuItemViews[currentTopIndex - 1], atIndex: 0)
+                
+                scrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.51, target: self, selector:  #selector(MenuViewController.scrollUp), userInfo: nil, repeats: true)
             }
             
         } else {
             
             if (currentBottomIndex < _menuItemViews.count - 1) {
                 
+                lockTime = NSDate().timeIntervalSince1970
                 // Remove the top view from the stack
                 containerStackView.removeArrangedSubview(firstArrangedView)
                 // Insert the view from _menuItemViews for the index after the bottom most one
                 containerStackView.insertArrangedSubview(_menuItemViews[currentBottomIndex + 1], atIndex: containerStackView.arrangedSubviews.count)
+                
+                scrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.51, target: self, selector:  #selector(MenuViewController.scrollDown), userInfo: nil, repeats: true)
             }
         }
         
@@ -242,8 +274,8 @@ public class MenuViewController: UIViewController {
         print("current bottom index \(currentBottomIndex)")
         print("item views: \(_menuItemViews.count)")
         
-        scrollUpView.alpha = currentTopIndex != 0 ? 1.0 : 0.0
-        scrollDownView.alpha = currentBottomIndex < (_menuItemViews.count - 1) ? 1.0 : 0.0
+        scrollUpView.alpha = containerStackView.arrangedSubviews.first == _menuItemViews.first ? 0.0 : 1.0
+        scrollDownView.alpha = containerStackView.arrangedSubviews.last == _menuItemViews.last ? 0.0 : 1.0
     }
 }
 
