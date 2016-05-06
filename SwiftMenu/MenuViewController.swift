@@ -196,9 +196,9 @@ public class MenuViewController: UIViewController {
             
             // If our touch is in the scoll down or scroll up view
             if sender.touchWithinView(scrollDownView) && scrollDownView.alpha != 0 {
-                scroll(false)
+                scrollDown()
             } else if sender.touchWithinView(scrollUpView) && scrollUpView.alpha != 0 {
-                scroll(true)
+                scrollUp()
             } else {
                 scrollTimer?.invalidate()
                 scrollTimer = nil
@@ -269,10 +269,6 @@ public class MenuViewController: UIViewController {
                 scrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.51, target: self, selector:  #selector(MenuViewController.scrollDown), userInfo: nil, repeats: true)
             }
         }
-        
-        print("current top index \(currentTopIndex)")
-        print("current bottom index \(currentBottomIndex)")
-        print("item views: \(_menuItemViews.count)")
         
         scrollUpView.alpha = containerStackView.arrangedSubviews.first == _menuItemViews.first ? 0.0 : 1.0
         scrollDownView.alpha = containerStackView.arrangedSubviews.last == _menuItemViews.last ? 0.0 : 1.0
