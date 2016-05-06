@@ -131,7 +131,7 @@ public class MenuViewController: UIViewController {
         let allowedItems = Int((UIScreen.mainScreen().bounds.size.height - (96)) / (62)) - 1
         
         var index = 0
-        while index < allowedItems {
+        while index < allowedItems && index < _menuItemViews.count {
             containerStackView.addArrangedSubview(_menuItemViews[index])
             index += 1
         }
