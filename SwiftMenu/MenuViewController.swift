@@ -107,6 +107,7 @@ public class MenuViewController: UIViewController {
     public override func viewDidLoad() {
         
         super.viewDidLoad()
+        modalTransitionStyle = .CrossDissolve
     }
     
     public override func viewWillAppear(animated: Bool) {
@@ -242,7 +243,6 @@ public class MenuViewController: UIViewController {
         
         guard let currentTopIndex = _menuItemViews.indexOf(firstArrangedView),currentBottomIndex = _menuItemViews.indexOf(lastArrangedView) else { return }
         
-        // If we're scrolling up, and the first arranged view isn't the first view from our menu item views, then we can scroll up
         if up {
             
             if (currentTopIndex > 0) {
@@ -269,9 +269,20 @@ public class MenuViewController: UIViewController {
                 scrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.51, target: self, selector:  #selector(MenuViewController.scrollDown), userInfo: nil, repeats: true)
             }
         }
+
         
-        scrollUpView.alpha = containerStackView.arrangedSubviews.first == _menuItemViews.first ? 0.0 : 1.0
-        scrollDownView.alpha = containerStackView.arrangedSubviews.last == _menuItemViews.last ? 0.0 : 1.0
+        UIView.animateWithDuration(0.3, delay: 0.0, options: [.AllowAnimatedContent], animations: {
+            
+            // If we're scrolling up, and the first arranged view isn't the first view from our menu item views, then we can scroll up
+            
+            self.scrollUpView.alpha = self.containerStackView.arrangedSubviews.first == _menuItemViews.first ? 0.0 : 1.0
+            self.scrollDownView.alpha = self.containerStackView.arrangedSubviews.last == _menuItemViews.last ? 0.0 : 1.0
+            
+            }) { (complete) in
+                
+        }
+        
+
     }
 }
 
