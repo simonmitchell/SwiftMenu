@@ -12,9 +12,9 @@ public typealias MenuItemHandler = (menuItem: MenuItem) -> (Void)
 
 public struct MenuItem {
     
-    var title: String?
-    var handler: MenuItemHandler?
-    var tag: Int?
+    public var title: String?
+    public var handler: MenuItemHandler?
+    public var tag: Int = 0
     
     public init(title: String?, handler: MenuItemHandler?) {
         
