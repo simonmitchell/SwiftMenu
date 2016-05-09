@@ -15,11 +15,18 @@ public struct MenuItem {
     public var title: String?
     public var handler: MenuItemHandler?
     public var tag: Int = 0
+    public var subMenuItems: [MenuItem]?
     
     public init(title: String?, handler: MenuItemHandler?) {
         
         self.title = title
         self.handler = handler
+    }
+    
+    public func hasSubMenu() -> Bool {
+        
+        guard let subMenuItems = subMenuItems where subMenuItems.count > 0 else { return false }
+        return true
     }
 }
 
@@ -45,6 +52,8 @@ public class MenuViewController: UIViewController {
     private var gestureRecognizer: UILongPressGestureRecognizer?
     
     private var originalPresentationMode: UIModalPresentationStyle = .FullScreen
+    
+    private var menuStack: [MenuItem]?
     
     private var hoveringView: UIView? {
         willSet {
@@ -113,18 +122,36 @@ public class MenuViewController: UIViewController {
     public override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
+        layoutMenuItemViews()
+    }
+    
+    public override func viewWillDisappear(animated: Bool) {
         
+        menuStack = []
+    }
+    
+    private func layoutMenuItemViews() {
+        
+        // Clear up all old menu item views
         for subview in containerStackView.arrangedSubviews {
             if let menuItemView = subview as? MenuItemView {
                 containerStackView.removeArrangedSubview(menuItemView)
             }
         }
+        
+        // Re-set the array
         menuItemViews = []
         
         var _menuItemViews: [MenuItemView] = []
         
-        if let _menuItems = menuItems {
-            _menuItemViews = _menuItems.map({ MenuItemView(item: $0) })
+        if let pushedMenuItem = menuStack?.last {
+            
+            if let subMenuItems = pushedMenuItem.subMenuItems {
+                _menuItemViews = subMenuItems.map({ MenuItemView(item: $0) })
+            }
+            
+        } else if let menuItems = menuItems {
+            _menuItemViews = menuItems.map({ MenuItemView(item: $0) })
         }
         
         // Minus 1 because cancel button is also 62 points high
@@ -149,6 +176,33 @@ public class MenuViewController: UIViewController {
         menuItemViews = _menuItemViews
     }
     
+    private func pushMenuItem(menuItem: MenuItem) {
+        
+        var stack: [MenuItem] = []
+        if let menuStack = menuStack {
+            stack = menuStack
+        }
+        
+        stack.append(menuItem)
+        
+        menuStack = stack
+        layoutMenuItemViews()
+    }
+    
+    func handleMaintainTouchGesture(sender: NSTimer) {
+        
+        // If our touch is in the scoll down or scroll up view
+        if hoveringView == scrollDownView && scrollDownView.alpha != 0 {
+            scrollDown()
+        } else if hoveringView == scrollUpView && scrollUpView.alpha != 0 {
+            scrollUp()
+        } else if let menuItemView = hoveringView as? MenuItemView where menuItemView.menuItem.hasSubMenu() {
+            pushMenuItem(menuItemView.menuItem)
+        }
+    }
+    
+    private var hoveringTimer: NSTimer?
+    
     func handleGesture(sender: UILongPressGestureRecognizer) {
         
         switch sender.state {
@@ -165,7 +219,10 @@ public class MenuViewController: UIViewController {
                     }
                 })
             }
+            
         case .Ended/*, .Cancelled*/:
+            
+            if sender != gestureRecognizer { return }
             
             if let _gestureRecognizer = gestureRecognizer {
                 
@@ -187,22 +244,19 @@ public class MenuViewController: UIViewController {
                 
                 self.hoveringView = nil
             })
+            
         case .Changed:
             
             let touchedViews = containerStackView.arrangedSubviews.filter({
                 return sender.touchWithinView($0)
             })
             
-            hoveringView = touchedViews.first
-            
-            // If our touch is in the scoll down or scroll up view
-            if sender.touchWithinView(scrollDownView) && scrollDownView.alpha != 0 {
-                scrollDown()
-            } else if sender.touchWithinView(scrollUpView) && scrollUpView.alpha != 0 {
-                scrollUp()
-            } else {
-                scrollTimer?.invalidate()
-                scrollTimer = nil
+            if hoveringView != touchedViews.first {
+                
+                hoveringTimer?.invalidate()
+                hoveringTimer = nil
+                hoveringView = touchedViews.first
+                hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
             }
             
         default:
@@ -213,14 +267,7 @@ public class MenuViewController: UIViewController {
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
-    private var lockTime: NSTimeInterval = NSDate().timeIntervalSince1970
-    
-    /**
-     Because the user has to actually move their finger for UIGestureRecognizer method to be called, we'll assume every 0.5 seconds they're on the button to scroll again
-     */
-    private var scrollTimer: NSTimer?
-    
+
     func scrollUp() {
         scroll(true)
     }
@@ -231,13 +278,6 @@ public class MenuViewController: UIViewController {
     
     func scroll(up: Bool) {
         
-        if NSDate().timeIntervalSince1970 - lockTime < 0.5 {
-            return
-        }
-        
-        scrollTimer?.invalidate()
-        scrollTimer = nil
-        
         guard let _menuItemViews = menuItemViews else { return }
         guard let firstArrangedView = containerStackView.arrangedSubviews.first as? MenuItemView, lastArrangedView = containerStackView.arrangedSubviews.last as? MenuItemView else { return }
         
@@ -247,26 +287,22 @@ public class MenuViewController: UIViewController {
             
             if (currentTopIndex > 0) {
                 
-                lockTime = NSDate().timeIntervalSince1970
                 // Remove the bottom view from the stack view
                 containerStackView.removeArrangedSubview(lastArrangedView)
                 // Insert the view from _menuItemViews for the index before the top most one
                 containerStackView.insertArrangedSubview(_menuItemViews[currentTopIndex - 1], atIndex: 0)
-                
-                scrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.51, target: self, selector:  #selector(MenuViewController.scrollUp), userInfo: nil, repeats: true)
+                hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
             }
             
         } else {
             
             if (currentBottomIndex < _menuItemViews.count - 1) {
                 
-                lockTime = NSDate().timeIntervalSince1970
                 // Remove the top view from the stack
                 containerStackView.removeArrangedSubview(firstArrangedView)
                 // Insert the view from _menuItemViews for the index after the bottom most one
                 containerStackView.insertArrangedSubview(_menuItemViews[currentBottomIndex + 1], atIndex: containerStackView.arrangedSubviews.count)
-                
-                scrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.51, target: self, selector:  #selector(MenuViewController.scrollDown), userInfo: nil, repeats: true)
+                hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
             }
         }
 
