@@ -192,6 +192,9 @@ public class MenuViewController: UIViewController {
     func handleMaintainTouchGesture(sender: NSTimer) {
         
         // If our touch is in the scoll down or scroll up view
+        
+        print("Hovered over view \(hoveringView)")
+        
         if hoveringView == scrollDownView && scrollDownView.alpha != 0 {
             scrollDown()
         } else if hoveringView == scrollUpView && scrollUpView.alpha != 0 {
@@ -247,16 +250,30 @@ public class MenuViewController: UIViewController {
             
         case .Changed:
             
-            let touchedViews = containerStackView.arrangedSubviews.filter({
+            var touchableViews = containerStackView.arrangedSubviews
+            touchableViews.appendContentsOf([scrollDownView, scrollUpView])
+            
+            let touchedViews = touchableViews.filter({
                 return sender.touchWithinView($0)
             })
             
-            if hoveringView != touchedViews.first {
+            if let newHoveringView = touchedViews.first where newHoveringView != hoveringView {
                 
                 hoveringTimer?.invalidate()
                 hoveringTimer = nil
                 hoveringView = touchedViews.first
                 hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
+                print("changed to hovering over view \(hoveringView)")
+                
+            } else if touchedViews.first == nil {
+                
+                hoveringTimer?.invalidate()
+                hoveringTimer = nil
+                hoveringView = nil
+                print("not hovering over view")
+            } else {
+                
+                print("still hovering over same view!")
             }
             
         default:
@@ -278,6 +295,8 @@ public class MenuViewController: UIViewController {
     
     func scroll(up: Bool) {
         
+        print("scrolling up \(up)")
+        
         guard let _menuItemViews = menuItemViews else { return }
         guard let firstArrangedView = containerStackView.arrangedSubviews.first as? MenuItemView, lastArrangedView = containerStackView.arrangedSubviews.last as? MenuItemView else { return }
         
@@ -297,6 +316,8 @@ public class MenuViewController: UIViewController {
         } else {
             
             if (currentBottomIndex < _menuItemViews.count - 1) {
+                
+                print("scrolling down!")
                 
                 // Remove the top view from the stack
                 containerStackView.removeArrangedSubview(firstArrangedView)
