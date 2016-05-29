@@ -89,6 +89,7 @@ public class MenuViewController: UIViewController {
         providesPresentationContextTransitionStyle = true
         definesPresentationContext = true
         modalPresentationStyle = .OverCurrentContext
+        modalTransitionStyle = .CrossDissolve
     }
     
     public func attachToView(view: UIView, inViewController: UIViewController) {
@@ -116,7 +117,6 @@ public class MenuViewController: UIViewController {
     public override func viewDidLoad() {
         
         super.viewDidLoad()
-        modalTransitionStyle = .CrossDissolve
     }
     
     public override func viewWillAppear(animated: Bool) {
@@ -193,8 +193,6 @@ public class MenuViewController: UIViewController {
         
         // If our touch is in the scoll down or scroll up view
         
-        print("Hovered over view \(hoveringView)")
-        
         if hoveringView == scrollDownView && scrollDownView.alpha != 0 {
             scrollDown()
         } else if hoveringView == scrollUpView && scrollUpView.alpha != 0 {
@@ -263,17 +261,12 @@ public class MenuViewController: UIViewController {
                 hoveringTimer = nil
                 hoveringView = touchedViews.first
                 hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
-                print("changed to hovering over view \(hoveringView)")
                 
             } else if touchedViews.first == nil {
                 
                 hoveringTimer?.invalidate()
                 hoveringTimer = nil
                 hoveringView = nil
-                print("not hovering over view")
-            } else {
-                
-                print("still hovering over same view!")
             }
             
         default:
