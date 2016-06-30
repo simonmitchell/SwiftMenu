@@ -81,6 +81,8 @@ public class MenuViewController: UIViewController {
     
     @IBOutlet weak var scrollDownView: UIImageView!
     
+    public var peeking: Bool = false
+    
     public init(menuItems initMenuItems: [MenuItem]) {
         
         menuItems = initMenuItems
@@ -92,6 +94,8 @@ public class MenuViewController: UIViewController {
         modalTransitionStyle = .CrossDissolve
     }
     
+    private var previewingContext: UIViewControllerPreviewing?
+    
     public func attachToView(view: UIView, inViewController: UIViewController) {
         
         if let _attachedView = attachedView, _gestureRecognizer = gestureRecognizer {
@@ -100,18 +104,32 @@ public class MenuViewController: UIViewController {
             gestureRecognizer = nil
         }
         
-        attachedView = view
-        attachedViewController = inViewController
-        
-        originalPresentationMode = inViewController.modalPresentationStyle
-        inViewController.modalPresentationStyle = .CurrentContext
-        
-        let newGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MenuViewController.handleGesture(_:)))
-        newGestureRecognizer.minimumPressDuration = 0.01
-        newGestureRecognizer.cancelsTouchesInView = false
-        newGestureRecognizer.delegate = self
-        view.addGestureRecognizer(newGestureRecognizer)
-        gestureRecognizer = newGestureRecognizer
+        if inViewController.traitCollection.forceTouchCapability == .Available {
+            
+            if let previewingContext = previewingContext {
+                inViewController.unregisterForPreviewingWithContext(previewingContext)
+            }
+            
+            previewingContext = inViewController.registerForPreviewingWithDelegate(self, sourceView: view)
+            attachedView = view
+            attachedViewController = inViewController
+            
+        } else {
+            
+            let newGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MenuViewController.handleGesture(_:)))
+            newGestureRecognizer.minimumPressDuration = 0.01
+            newGestureRecognizer.cancelsTouchesInView = false
+            newGestureRecognizer.delegate = self
+            gestureRecognizer = newGestureRecognizer
+            
+            attachedView = view
+            attachedViewController = inViewController
+            
+            originalPresentationMode = inViewController.modalPresentationStyle
+            inViewController.modalPresentationStyle = .CurrentContext
+            
+            view.addGestureRecognizer(newGestureRecognizer)
+        }
     }
     
     public override func viewDidLoad() {
@@ -207,7 +225,7 @@ public class MenuViewController: UIViewController {
     func handleGesture(sender: UILongPressGestureRecognizer) {
         
         switch sender.state {
-        case .Began:
+        case .Began where !peeking:
             
             if let viewController = attachedViewController where sender == gestureRecognizer && self.presentingViewController == nil {
                 
@@ -340,5 +358,39 @@ extension MenuViewController: UIGestureRecognizerDelegate {
     
     public func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
+    }
+}
+
+extension MenuViewController: UIViewControllerPreviewingDelegate {
+    
+    public func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        
+        let viewController = MenuViewController(menuItems: menuItems!)
+        viewController.peeking = true
+        viewController.attachedView = attachedView
+        viewController.attachedViewController = attachedViewController
+    
+        
+        let newGestureRecognizer = UILongPressGestureRecognizer(target: viewController, action: #selector(MenuViewController.handleGesture(_:)))
+        newGestureRecognizer.minimumPressDuration = 0.01
+        newGestureRecognizer.cancelsTouchesInView = false
+        newGestureRecognizer.delegate = self
+        viewController.gestureRecognizer = newGestureRecognizer
+        
+        viewController.view.addGestureRecognizer(newGestureRecognizer)
+        
+        return viewController
+    }
+    
+    public func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController viewControllerToCommit: UIViewController) {
+        
+        attachedViewController?.presentViewController(viewControllerToCommit, animated: true, completion: {
+            
+//            if let _gestureRecognizer = self.gestureRecognizer {
+//                
+//                // Switch the gesture recognizer over to this view
+//                viewControllerToCommit.view.addGestureRecognizer(_gestureRecognizer)
+//            }
+        })
     }
 }
