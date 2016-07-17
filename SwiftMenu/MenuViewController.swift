@@ -209,7 +209,11 @@ public class MenuViewController: UIViewController {
         switch sender.state {
         case .Began:
             
-            if let viewController = attachedViewController where sender == gestureRecognizer && self.presentingViewController == nil {
+            if var viewController = attachedViewController where sender == gestureRecognizer && self.presentingViewController == nil {
+                
+                if let tabBarController = viewController.tabBarController  {
+                    viewController = tabBarController
+                }
                 
                 viewController.presentViewController(self, animated: true, completion: {
                     
