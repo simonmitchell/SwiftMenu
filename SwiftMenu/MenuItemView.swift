@@ -16,6 +16,8 @@ internal class MenuItemView: UIView {
     
     private let singlePixelLine: UIView = UIView()
     
+    private let chevronImageView = UIImageView()
+    
     internal var selected: Bool = false {
         didSet {
             titleLabel.textColor = selected ? UIColor.whiteColor() : UIColor.blackColor()
@@ -52,14 +54,32 @@ internal class MenuItemView: UIView {
         
         singlePixelLine.backgroundColor = UIColor.blackColor()
         addSubview(singlePixelLine)
+        
+        if let _ = menuItem.subMenuItems {
+            addSubview(chevronImageView)
+            let bundle = NSBundle(forClass: MenuItemView.self)
+            chevronImageView.image = UIImage(named: "Chevron", inBundle: bundle, compatibleWithTraitCollection: nil)
+        }
     }
     
     override func layoutSubviews() {
         
         super.layoutSubviews()
         
-        let constrainedSize = titleLabel.sizeThatFits(CGSizeMake(CGFloat(MAXFLOAT), CGFloat(MAXFLOAT)))
-        titleLabel.frame = CGRectMake(0, 0, frame.width - 18, constrainedSize.height)
+        chevronImageView.sizeToFit()
+        
+        if let _ = menuItem.subMenuItems {
+            
+            let constrainedSize = titleLabel.sizeThatFits(CGSizeMake(frame.width - 18 - chevronImageView.bounds.width - 16, CGFloat(MAXFLOAT)))
+            chevronImageView.frame = CGRectMake(frame.maxX - chevronImageView.bounds.width - 16, bounds.midY - chevronImageView.bounds.height/2, chevronImageView.bounds.width, chevronImageView.bounds.height)
+            titleLabel.frame = CGRectMake(0, 0, frame.width - 18 - chevronImageView.bounds.width - 16, constrainedSize.height)
+            
+        } else {
+            
+            let constrainedSize = titleLabel.sizeThatFits(CGSizeMake(frame.width - 18, CGFloat(MAXFLOAT)))
+            titleLabel.frame = CGRectMake(0, 0, frame.width - 18, constrainedSize.height)
+        }
+        
         titleLabel.center = CGPointMake(bounds.width/2, bounds.height/2)
         
         let pixelSize = 1 / UIScreen.mainScreen().scale
