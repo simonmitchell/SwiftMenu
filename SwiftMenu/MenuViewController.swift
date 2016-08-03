@@ -51,6 +51,8 @@ public class MenuViewController: UIViewController {
     
     private var gestureRecognizer: UILongPressGestureRecognizer?
     
+    private var tapGestureRecognizer: UITapGestureRecognizer?
+    
     private var originalPresentationMode: UIModalPresentationStyle = .FullScreen
     
     private var menuStack: [MenuItem]?
@@ -199,10 +201,16 @@ public class MenuViewController: UIViewController {
             scrollUp()
         } else if let menuItemView = hoveringView as? MenuItemView where menuItemView.menuItem.hasSubMenu() {
             pushMenuItem(menuItemView.menuItem)
+        } else if tapGestureRecognizer != nil {
+            dismiss()
         }
     }
     
     private var hoveringTimer: NSTimer?
+    
+    func handleTapGesture(sender: UITapGestureRecognizer) {
+        handleTap(sender, timer: false)
+    }
     
     func handleGesture(sender: UILongPressGestureRecognizer) {
         
@@ -225,7 +233,7 @@ public class MenuViewController: UIViewController {
                 })
             }
             
-        case .Ended/*, .Cancelled*/:
+        case .Ended, .Cancelled:
             
             if sender != gestureRecognizer { return }
             
@@ -235,46 +243,80 @@ public class MenuViewController: UIViewController {
                 view.removeGestureRecognizer(_gestureRecognizer)
                 
                 // And switch it back to the attached view!
-                if let _attachedView = attachedView {
-                    _attachedView.addGestureRecognizer(_gestureRecognizer)
+                
+                if sender.state == .Cancelled {
+                    
+                    let newGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(MenuViewController.handleTapGesture(_:)))
+                    newGestureRecognizer.cancelsTouchesInView = false
+                    tapGestureRecognizer = newGestureRecognizer
+                    self.view.addGestureRecognizer(tapGestureRecognizer!)
+                    
+                } else {
+                    
+                    if let _attachedView = attachedView {
+                        _attachedView.addGestureRecognizer(_gestureRecognizer)
+                    }
                 }
             }
             
-            dismissViewControllerAnimated(true, completion: {
-                self.attachedViewController?.modalPresentationStyle = self.originalPresentationMode
-                
-                if let selectedMenuView = self.hoveringView as? MenuItemView {
-                    selectedMenuView.menuItem.handler?(menuItem: selectedMenuView.menuItem)
-                }
-                
-                self.hoveringView = nil
-            })
+            // We don't want to dismiss if the user has tapped into the menu
+            if sender.state == .Ended && sender == gestureRecognizer && tapGestureRecognizer == nil {
+                dismiss()
+            }
             
         case .Changed:
             
-            var touchableViews = containerStackView.arrangedSubviews
-            touchableViews.appendContentsOf([scrollDownView, scrollUpView])
-            
-            let touchedViews = touchableViews.filter({
-                return sender.touchWithinView($0)
-            })
-            
-            if let newHoveringView = touchedViews.first where newHoveringView != hoveringView {
-                
-                hoveringTimer?.invalidate()
-                hoveringTimer = nil
-                hoveringView = touchedViews.first
-                hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
-                
-            } else if touchedViews.first == nil {
-                
-                hoveringTimer?.invalidate()
-                hoveringTimer = nil
-                hoveringView = nil
-            }
+            handleTap(sender, timer: true)
             
         default:
             ""
+        }
+    }
+    
+    func dismiss() {
+        
+        dismissViewControllerAnimated(true, completion: {
+            self.attachedViewController?.modalPresentationStyle = self.originalPresentationMode
+            
+            if let selectedMenuView = self.hoveringView as? MenuItemView {
+                selectedMenuView.menuItem.handler?(menuItem: selectedMenuView.menuItem)
+            }
+            
+            self.hoveringView = nil
+            
+            if let tapGestureRecognizer = self.tapGestureRecognizer {
+                self.view.removeGestureRecognizer(tapGestureRecognizer)
+                self.tapGestureRecognizer = nil
+            }
+        })
+    }
+    
+    func handleTap(sender: UIGestureRecognizer, timer: Bool) {
+    
+        var touchableViews = containerStackView.arrangedSubviews
+        touchableViews.appendContentsOf([scrollDownView, scrollUpView])
+        
+        let touchedViews = touchableViews.filter({
+            return sender.touchWithinView($0)
+        })
+        
+        if !timer {
+            
+            hoveringView = touchedViews.first
+            handleMaintainTouchGesture(NSTimer())
+            
+        } else if let newHoveringView = touchedViews.first where newHoveringView != hoveringView {
+            
+            hoveringTimer?.invalidate()
+            hoveringTimer = nil
+            hoveringView = touchedViews.first
+            hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
+            
+        } else if touchedViews.first == nil {
+            
+            hoveringTimer?.invalidate()
+            hoveringTimer = nil
+            hoveringView = nil
         }
     }
     
@@ -307,7 +349,10 @@ public class MenuViewController: UIViewController {
                 containerStackView.removeArrangedSubview(lastArrangedView)
                 // Insert the view from _menuItemViews for the index before the top most one
                 containerStackView.insertArrangedSubview(_menuItemViews[currentTopIndex - 1], atIndex: 0)
-                hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
+                
+                if tapGestureRecognizer == nil {
+                    hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
+                }
             }
             
         } else {
@@ -320,7 +365,10 @@ public class MenuViewController: UIViewController {
                 containerStackView.removeArrangedSubview(firstArrangedView)
                 // Insert the view from _menuItemViews for the index after the bottom most one
                 containerStackView.insertArrangedSubview(_menuItemViews[currentBottomIndex + 1], atIndex: containerStackView.arrangedSubviews.count)
-                hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
+                
+                if tapGestureRecognizer == nil {
+                    hoveringTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(MenuViewController.handleMaintainTouchGesture(_:)), userInfo: nil, repeats: false)
+                }
             }
         }
 
